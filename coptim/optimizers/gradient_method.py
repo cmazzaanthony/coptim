@@ -5,6 +5,7 @@ from coptim.optimizer import Optimizer
 
 class GradientMethod(Optimizer):
     def __init__(self):
+        # TODO: More metrics: vector of x's, objective values, etc.
         self.iterations = 0
 
     def optimize(self, x_0, func, beta, sigma, epsilon):

@@ -4,10 +4,11 @@ from coptim.optimizer import Optimizer
 
 
 class GradientMethod(Optimizer):
+    def __init__(self):
+        self.iterations = 0
 
     def optimize(self, x_0, func, beta, sigma, epsilon):
         x = x_0
-        iterations = 0
         while self.stopping_criteria(x, func, epsilon):
             descent_direction = -1 * func.gradient(x)
 
@@ -19,9 +20,9 @@ class GradientMethod(Optimizer):
 
             # update step
             x = x + step_size * descent_direction
-            iterations += 1
+            self.iterations += 1
 
-        return iterations
+        return x
 
     def stopping_criteria(self, x, func, epsilon):
         return np.linalg.norm(func.gradient(x)) >= epsilon
@@ -30,7 +31,7 @@ class GradientMethod(Optimizer):
         i = 0
         inequality_satisfied = True
         while inequality_satisfied:
-            if func(x + np.power(beta, i) * d) <= func(x) + np.power(beta, i) * sigma * func.gradient(x).dot(d):
+            if func.eval(x + np.power(beta, i) * d) <= func.eval(x) + np.power(beta, i) * sigma * func.gradient(x).dot(d):
                 break
 
             i += 1

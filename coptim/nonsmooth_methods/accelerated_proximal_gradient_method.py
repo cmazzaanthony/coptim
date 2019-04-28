@@ -130,14 +130,14 @@ if __name__ == '__main__':
                                                              max_iter=10000,
                                                              lam=0.02,
                                                              type="group")
-    
+
     fig = plt.figure()
     plt.title(r"Accelerated Group LASSO $f^k-f^*$")
     ax = fig.add_subplot(1, 1, 1)
-    p1 = ax.plot(f_train-f_star)
-    p2 = ax.plot(f_test-f_star)
-    handles = [p1[0],p2[0]]
-    labels = ['Train','Test']
+    p1 = ax.plot(f_train - f_star)
+    p2 = ax.plot(f_test - f_star)
+    handles = [p1[0], p2[0]]
+    labels = ['Train', 'Test']
     ax.set_yscale('log')
     ax.set_xlabel("Steps")
     ax.set_ylabel("Objective function error")

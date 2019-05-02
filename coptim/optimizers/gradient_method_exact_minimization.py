@@ -25,7 +25,7 @@ class GradientMethodExactMinimization(Optimizer):
                       [0, 0, 0, delta]])
         c = np.array([1, 1, 1, 1])
         x = x_0
-        while np.linalg.norm(self.dfunct(Q, c, x)) >= epsilon:
+        while self.stopping_criteria(x, Q, c, epsilon):
             descent_direction = -1 * self.dfunct(Q, c, x)
 
             step_size = self.step_size(Q, c, x, descent_direction)
@@ -35,11 +35,7 @@ class GradientMethodExactMinimization(Optimizer):
 
             self.iterations += 1
 
-        print('Final parameters are \n'
-              'x => {x}\n'
-              'iterations => {k}\n'
-              'delta => {delta}\n'
-              'Q => \n {Q}'.format(x=x,
-                                   k=k,
-                                   delta=delta,
-                                   Q=Q))
+        return x
+
+    def stopping_criteria(self, x, Q, c, epsilon):
+        return np.linalg.norm(self.dfunct(Q, c, x)) >= epsilon

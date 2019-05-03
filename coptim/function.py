@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 class Function(ABC):
 
     @abstractmethod
-    def eval(self, x):
+    def eval(self, *arg, **kwargs):
         pass
 
     @abstractmethod
-    def gradient(self, x):
+    def gradient(self, *arg, **kwargs):
         pass
 
     @abstractmethod
-    def hessian(self, x):
+    def hessian(self, *arg, **kwargs):
         pass

@@ -8,12 +8,6 @@ class GradientMethodExactMinimization(Optimizer):
         # TODO: More metrics: vector of x's, objective values, etc.
         self.iterations = 0
 
-    def funct(self, Q, c, x, gamma):
-        return 0.5 * x.T.dot(Q).dot(x) + c + gamma
-
-    def dfunct(self, Q, c, x):
-        return Q.dot(x) + c
-
     def step_size(self, Q, c, x, d):
         g = self.dfunct(Q, c, x)
         return -1 * g.T.dot(d) / d.T.dot(Q).dot(d)

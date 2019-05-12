@@ -8,7 +8,7 @@ from coptim.optimizers.gradient_method_exact_minimization import GradientMethodE
 
 class TestGradientMethodExactMinimization(unittest.TestCase):
 
-    def test_inexact_gradient_method(self):
+    def test_inexact_gradient_method_with_quad_objective(self):
         objective = Quadratic()
         starting_point = np.array([1, 2, 3, 4])
         deltas = np.array([0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001])
@@ -31,5 +31,5 @@ class TestGradientMethodExactMinimization(unittest.TestCase):
             761,
             7449,
             74321,
-            743055
+            743055,
         ])

@@ -21,19 +21,19 @@ class NewtonMethod(Optimizer):
 
         return True
 
-    def optimize(self, x_0, func, beta, sigma, epsilon):
+    def optimize(self,x_0, rho, p, k_max, beta, sigma, epsilon, func):
         x = x_0
         while np.linalg.norm(func.gradient(x)) >= epsilon or k > k_max:
             descent_direction = -1 * func.gradient(x)
 
             # update step
-            if newton_solvable(x, descent_direction, rho, p, hessian):
+            if self.newton_solvable(x, descent_direction, rho, p, func.hessian):
                 inverse = np.linalg.inv(func.hessian(x))
                 d = inverse.dot(descent_direction)
             else:
                 d = descent_direction
 
-            step_size = step_size(beta, sigma, x, d, func.gradient, func)
+            step_size = self.step_size(beta, sigma, x, d, func.gradient, func)
             x = x + step_size * d
 
             self.iterations += 1

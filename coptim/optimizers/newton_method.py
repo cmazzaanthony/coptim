@@ -21,9 +21,9 @@ class NewtonMethod(Optimizer):
 
         return True
 
-    def optimize(self,x_0, rho, p, k_max, beta, sigma, epsilon, func):
+    def optimize(self, x_0, rho, p, k_max, beta, sigma, epsilon, func):
         x = x_0
-        while np.linalg.norm(func.gradient(x)) >= epsilon or k > k_max:
+        while self.stopping_criteria(self, x, func, epsilon, k_max):
             descent_direction = -1 * func.gradient(x)
 
             # update step
@@ -38,8 +38,8 @@ class NewtonMethod(Optimizer):
 
             self.iterations += 1
 
-    def stopping_criteria(self, x, func, epsilon):
-
+    def stopping_criteria(self, x, func, epsilon, k_max):
+        return np.linalg.norm(func.gradient(x)) >= epsilon or self.iterations > k_max
 
     def step_size(self, beta, sigma, x, d, func):
         """
@@ -48,7 +48,8 @@ class NewtonMethod(Optimizer):
         i = 0
         inequality_satisfied = True
         while inequality_satisfied:
-            if func.eval(x + np.power(beta, i) * d) <= func.eval(x) + np.power(beta, i) * sigma * func.gradient(x).dot(d):
+            if func.eval(x + np.power(beta, i) * d) <= func.eval(x) + np.power(beta, i) * sigma * func.gradient(x).dot(
+                    d):
                 break
 
             i += 1

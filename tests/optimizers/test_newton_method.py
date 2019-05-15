@@ -33,7 +33,7 @@ class TestNewtonMethod(unittest.TestCase):
         self.assertEqual(optimizer.iterations, 8)
 
     def test_newton_method_with_brown_objective(self):
-        starting_point = np.array([1.2, 1])
+        starting_point = np.array([1.0, 1.0])
         rho = 1e-8
         p = 2.1
         k_max = 200

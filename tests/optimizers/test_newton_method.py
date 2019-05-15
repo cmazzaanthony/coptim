@@ -53,4 +53,4 @@ class TestNewtonMethod(unittest.TestCase):
                            epsilon=epsilon,
                            func=objective)
 
-        self.assertEqual(optimizer.iterations, 8)
+        self.assertEqual(optimizer.iterations, 11)

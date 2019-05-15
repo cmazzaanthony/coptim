@@ -23,7 +23,7 @@ class NewtonMethod(Optimizer):
 
     def optimize(self, x_0, rho, p, k_max, beta, sigma, epsilon, func):
         x = x_0
-        while self.stopping_criteria(self, x, func, epsilon, k_max):
+        while self.stopping_criteria(x, func, epsilon, k_max):
             descent_direction = -1 * func.gradient(x)
 
             # update step
@@ -33,7 +33,7 @@ class NewtonMethod(Optimizer):
             else:
                 d = descent_direction
 
-            step_size = self.step_size(beta, sigma, x, d, func.gradient, func)
+            step_size = self.step_size(beta, sigma, x, d, func)
             x = x + step_size * d
 
             self.iterations += 1

@@ -8,6 +8,58 @@ class BFGSMethod(Optimizer):
         # TODO: More metrics: vector of x's, objective values, etc.
         self.iterations = 0
 
+    def psi(self, t, sigma, x, d, func, gradient):
+        return func(x + t * d) - \
+               func(x) - \
+               sigma * t * gradient(x).dot(d)
+
+    def wolfe_powell_rule_phase_B(self, a, b, rho, sigma, x, d, func, gradient):
+        a_j = a
+        b_j = b
+        stop = False
+
+        while not stop:
+            t_j = a_j + (b_j - a_j) / 2
+
+            if self.psi(t_j, sigma, x, d, func, gradient) >= 0:
+                b_j = t_j
+
+            if self.psi(t_j, sigma, x, d, func, gradient) < 0 and \
+                    gradient(x + t_j * d).dot(d) >= rho * gradient(x).dot(d):
+                t = t_j
+                stop = True
+
+            if self.psi(t_j, sigma, x, d, func, gradient) < 0 and \
+                    gradient(x + t_j * d).dot(d) < rho * gradient(x).dot(d):
+                a_j = t_j
+
+        return t
+
+    def wolfe_powell_rule_phase_A(rho, sigma, x, d, func, gradient):
+        gamma = 2
+        t_i = 1
+        stop = False
+        i = 0
+
+        while not stop:
+            if psi(t_i, sigma, x, d, func, gradient) >= 0:
+                a = 0
+                b = t_i
+
+                t_i = wolfe_powell_rule_phase_B(a, b, rho, sigma, x, d, func, gradient)
+
+            if psi(t_i, sigma, x, d, func, gradient) < 0 and \
+                    gradient(x + t_i * d).dot(d) >= rho * gradient(x).dot(d):
+                t = t_i
+                stop = True
+
+            if psi(t_i, sigma, x, d, func, gradient) < 0 and \
+                    gradient(x + t_i * d).dot(d) < rho * gradient(x).dot(d):
+                i += 1
+                t_i = gamma * t_i
+
+        return t
+
     def optimize(x_0, H_0, rho, sigma, epsilon, func, gradient):
         x = x_0
         H = H_0
@@ -15,7 +67,7 @@ class BFGSMethod(Optimizer):
         while np.linalg.norm(gradient(x)) > epsilon:
             nabla_x = -gradient(x)
 
-            inverse = inv(H)
+            inverse = np.linalg.inv(H)
             d = inverse.dot(nabla_x)
 
             step_size = wolfe_powell_rule_phase_A(rho=rho,

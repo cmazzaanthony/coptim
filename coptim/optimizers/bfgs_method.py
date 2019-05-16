@@ -13,7 +13,7 @@ class BFGSMethod(Optimizer):
                func(x) - \
                sigma * t * gradient(x).dot(d)
 
-    def wolfe_powell_rule_phase_B(self, a, b, rho, sigma, x, d, func, gradient):
+    def wolfe_powell_rule_phase_B(self, a, b, rho, sigma, x, d, func):
         a_j = a
         b_j = b
         stop = False
@@ -35,25 +35,25 @@ class BFGSMethod(Optimizer):
 
         return t
 
-    def wolfe_powell_rule_phase_A(rho, sigma, x, d, func, gradient):
+    def wolfe_powell_rule_phase_A(self, rho, sigma, x, d, func):
         gamma = 2
         t_i = 1
         stop = False
         i = 0
 
         while not stop:
-            if psi(t_i, sigma, x, d, func, gradient) >= 0:
+            if self.psi(t_i, sigma, x, d, func) >= 0:
                 a = 0
                 b = t_i
 
-                t_i = wolfe_powell_rule_phase_B(a, b, rho, sigma, x, d, func, gradient)
+                t_i = self.wolfe_powell_rule_phase_B(a, b, rho, sigma, x, d, func)
 
-            if psi(t_i, sigma, x, d, func, gradient) < 0 and \
+            if self.psi(t_i, sigma, x, d, func, gradient) < 0 and \
                     gradient(x + t_i * d).dot(d) >= rho * gradient(x).dot(d):
                 t = t_i
                 stop = True
 
-            if psi(t_i, sigma, x, d, func, gradient) < 0 and \
+            if self.psi(t_i, sigma, x, d, func, gradient) < 0 and \
                     gradient(x + t_i * d).dot(d) < rho * gradient(x).dot(d):
                 i += 1
                 t_i = gamma * t_i

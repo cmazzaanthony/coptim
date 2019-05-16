@@ -35,7 +35,7 @@ class BFGSMethod(Optimizer):
 
         return t
 
-    def wolfe_powell_rule_phase_A(self, rho, sigma, x, d, func):
+    def step_size(self, rho, sigma, x, d, func):
         gamma = 2
         t_i = 1
         stop = False
@@ -60,11 +60,11 @@ class BFGSMethod(Optimizer):
 
         return t
 
-    def optimize(self, x_0, H_0, rho, sigma, epsilon, func, gradient):
+    def optimize(self, x_0, H_0, rho, sigma, epsilon, func):
         x = x_0
         H = H_0
-        while np.linalg.norm(gradient(x)) > epsilon:
-            nabla_x = -gradient(x)
+        while self.stopping_criteria(x, func, epsilon):
+            nabla_x = -func.gradient(x)
 
             inverse = np.linalg.inv(H)
             d = inverse.dot(nabla_x)
@@ -77,7 +77,7 @@ class BFGSMethod(Optimizer):
 
             x_new = x + step_size * d
             s = x_new - x
-            y = gradient(x_new) - gradient(x)
+            y = func.gradient(x_new) - func.gradient(x)
 
             H = H + (np.outer(y, y.T) / np.dot(y.T, s)) - np.outer(H.dot(s), s.T).dot(H) / (np.dot(np.dot(s.T, H), s))
 
@@ -89,14 +89,3 @@ class BFGSMethod(Optimizer):
     def stopping_criteria(self, x, func, epsilon):
         return np.linalg.norm(func.gradient(x)) >= epsilon
 
-    def step_size(self, x, func, beta, d, sigma):
-        i = 0
-        inequality_satisfied = True
-        while inequality_satisfied:
-            if func.eval(x + np.power(beta, i) * d) <= func.eval(x) + np.power(beta, i) * sigma * func.gradient(x).dot(
-                    d):
-                break
-
-            i += 1
-
-        return np.power(beta, i)

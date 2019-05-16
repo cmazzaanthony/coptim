@@ -2,16 +2,26 @@ import unittest
 
 import numpy as np
 
-from coptim.functions.quadratic import Quadratic
+from coptim.functions.rosenbrock import Rosenbrock
+from coptim.optimizers.bfgs_method import BFGSMethod
 
 
 class TestBFGSMethod(unittest.TestCase):
 
-    def test_bfgs_method_with_quad_objective(self):
-        objective = Quadratic()
-        starting_point = np.array([1, 2, 3, 4])
-        deltas = np.array([0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001])
-        epsilon = 0.00001
-        estimates = list()
-        iterations = list()
-        for delta in deltas:
+    def test_bfgs_method_with_rosenbrock_objective(self):
+        objective = Rosenbrock()
+        starting_point = np.array([-1.2, 1])
+        H_0 = np.array([[1, 0],
+                        [0, 1]])
+
+        rho = 0.9
+        sigma = 1e-4
+        epsilon = 1e-6
+
+        optimizer = BFGSMethod()
+        x = optimizer.optimize(starting_point,
+                               H_0,
+                               rho,
+                               sigma,
+                               epsilon,
+                               objective)

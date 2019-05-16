@@ -25,3 +25,5 @@ class TestBFGSMethod(unittest.TestCase):
                                sigma,
                                epsilon,
                                objective)
+
+        self.assertEqual(optimizer.iterations, 34)

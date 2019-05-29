@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 
+from coptim.functions.bateman import Bateman
 from coptim.functions.rosenbrock import Rosenbrock
 from coptim.optimizers.bfgs_method import BFGSMethod
 

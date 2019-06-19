@@ -1,6 +1,6 @@
 import numpy as np
 
-from coptim.optimizer import Optimizer
+from src.optimizer import Optimizer
 
 
 class GradientMethod(Optimizer):

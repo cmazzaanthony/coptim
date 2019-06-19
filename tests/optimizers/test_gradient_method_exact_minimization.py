@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 
-from coptim.functions.quadratic import Quadratic
-from coptim.optimizers.gradient_method_exact_minimization import GradientMethodExactMinimization
+from src.functions.quadratic import Quadratic
+from src.optimizers.gradient_method_exact_minimization import GradientMethodExactMinimization
 
 
 class TestGradientMethodExactMinimization(unittest.TestCase):

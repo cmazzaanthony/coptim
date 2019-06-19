@@ -1,35 +1,36 @@
 import numpy as np
 
-from coptim.optimizer import Optimizer
+from src.optimizer import Optimizer
 
 
-class GradientMethodExactMinimization(Optimizer):
+class FastGradientMethod(Optimizer):
     def __init__(self):
         # TODO: More metrics: vector of x's, objective values, etc.
         self.iterations = 0
 
-    def step_size(self, Q, c, x, d, func):
-        g = func.gradient(Q, c, x)
-        return -1 * g.T.dot(d) / d.T.dot(Q).dot(d)
-
-    def optimize(self, x_0, func, delta, epsilon):
+    def optimize(self, x_0, func, epsilon, delta):
         Q = np.array([[1, 0, 0, 0],
                       [0, 1, 0, 0],
                       [0, 0, 1, 0],
                       [0, 0, 0, delta]])
+        L = np.linalg.norm(Q)
         c = np.array([1, 1, 1, 1])
         x = x_0
+        y = x_0
+        alpha = 1
         while self.stopping_criteria(x, Q, c, func, epsilon):
-            descent_direction = -1 * func.gradient(Q, c, x)
+            prev_x = x
+            x = y - 1 / L * func.gradient(Q, c, y)
 
-            step_size = self.step_size(Q, c, x, descent_direction, func)
+            prev_alpha = alpha
+            alpha = (1 + np.sqrt(1 + 4 * np.power(prev_alpha, 2))) / 2
 
-            # update step
-            x = x + step_size * descent_direction
+            y = x + (prev_alpha - 1) / alpha * (x - prev_x)
 
             self.iterations += 1
 
-        return x
-
     def stopping_criteria(self, x, Q, c, func, epsilon):
         return np.linalg.norm(func.gradient(Q, c, x)) >= epsilon
+
+    def step_size(self, x, func, beta, d, sigma):
+        pass

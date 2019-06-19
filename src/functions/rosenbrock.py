@@ -1,5 +1,5 @@
 import numpy as np
-from coptim.function import Function
+from src.function import Function
 
 
 class Rosenbrock(Function):

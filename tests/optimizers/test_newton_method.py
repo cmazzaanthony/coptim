@@ -2,9 +2,9 @@ import unittest
 
 import numpy as np
 
-from coptim.functions.brown import Brown
-from coptim.functions.rosenbrock import Rosenbrock
-from coptim.optimizers.newton_method import NewtonMethod
+from src.functions.brown import Brown
+from src.functions.rosenbrock import Rosenbrock
+from src.optimizers.newton_method import NewtonMethod
 
 
 class TestNewtonMethod(unittest.TestCase):

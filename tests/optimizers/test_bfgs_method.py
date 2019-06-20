@@ -29,7 +29,7 @@ class TestBFGSMethod(unittest.TestCase):
 
         self.assertEqual(optimizer.iterations, 34)
 
-    def test_bfgs_method_with_brown_objective(self):
+    def test_bfgs_method_with_bateman_objective(self):
         objective = Bateman()
         starting_point = np.array([0.05, 0.1, 0.4])
         H_0 = np.array([[1, 0, 0],
@@ -47,4 +47,4 @@ class TestBFGSMethod(unittest.TestCase):
                                epsilon,
                                objective)
 
-        self.assertEqual(optimizer.iterations, 34)
+        self.assertEqual(optimizer.iterations, 29)

@@ -129,7 +129,7 @@ def global_inexact_newton_method(x_0, rho, p, beta, sigma, epsilon, f, gradient,
 
         k += 1
 
-    # print("new x: {}".format(x))
+    print("new x: {}".format(x))
     print("Number of iterations: {}".format(k))
     return k
 

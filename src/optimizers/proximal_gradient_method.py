@@ -4,35 +4,53 @@ from src.optimizer import Optimizer
 
 
 class ProximalGradientMethod(Optimizer):
-    def __init__(self):
-        # TODO: More metrics: vector of x's, objective values, etc.
+    def __init__(self, design_matrix, response):
+        self.design_matrix = design_matrix
+        self.response = response
         self.iterations = 0
 
-    def optimize(self, x_0, func, beta, sigma, epsilon):
+    def _backtracking_line_search(self, x, beta, y, weights, max_iter=20, epsilon=2.0):
+        mse_val = self.sfunc.eval(x, beta, y)
+        mse_grad_val = self.sfunc.gradient(x, beta, y)
+        step = 1.0
+
+        for ls in range(max_iter):
+            beta_prox = self.nsfunc.prox(beta - mse_grad_val / step, weights / step)
+            delta = (beta_prox - beta).flatten()
+
+            orig_func = self.sfunc.eval(x, beta_prox, y)
+            quad_func = mse_val + delta @ mse_grad_val.flatten() + 0.5 * step * (delta @ delta)
+
+            if orig_func <= quad_func:
+                break
+
+            step *= epsilon
+
+        return beta_prox
+
+    def optimize(self, x_0, func, nsfunc, beta, sigma, epsilon):
         x = x_0
-        while self.stopping_criteria(x, func, epsilon):
-            descent_direction = -1 * func.gradient(x)
+        for iterations in range(100):
 
-            step_size = self.step_size(x,
-                                       func,
-                                       beta,
-                                       descent_direction,
-                                       sigma)
+            next_beta = self._backtracking_line_search(beta)
 
-            # update step
-            x = x + step_size * descent_direction
-            self.iterations += 1
+            if self.stopping_criteria(next_beta, beta):
+                print(f'Threshold reached in {iterations}')
+                break
 
-        return x
+            beta = next_beta
 
-    def stopping_criteria(self, x, func, epsilon):
-        return np.linalg.norm(func.gradient(x)) >= epsilon
+        return beta
+
+    def stopping_criteria(self, x_t, x, func, epsilon):
+        return np.linalg.norm(x_t - x) <= epsilon
 
     def step_size(self, x, func, beta, d, sigma):
         i = 0
         inequality_satisfied = True
         while inequality_satisfied:
-            if func.eval(x + np.power(beta, i) * d) <= func.eval(x) + np.power(beta, i) * sigma * func.gradient(x).dot(d):
+            if func.eval(x + np.power(beta, i) * d) <= func.eval(x) + np.power(beta, i) * sigma * func.gradient(x).dot(
+                    d):
                 break
 
             i += 1

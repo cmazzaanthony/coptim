@@ -29,6 +29,8 @@ class FastGradientMethod(Optimizer):
 
             self.iterations += 1
 
+        return x
+
     def stopping_criteria(self, x, Q, c, func, epsilon):
         return np.linalg.norm(func.gradient(Q, c, x)) >= epsilon
 

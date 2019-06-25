@@ -36,7 +36,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gradient method with Armijo Rule" href="globalized_bfgs_method.html" />
+    <link rel="prev" title="Globalized Newton Method" href="globalized_newton_method.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,9 +83,20 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gradient_method.html">Gradient method with Armijo Rule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fast_gradient_method.html">Fast Gradient method with Armijo Rule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="globalized_newton_method.html">Globalized Newton Method</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Globalized Inexact Newton Method</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Algorithm">Algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Step-Size:-Armijo-Rule">Step Size: Armijo Rule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Rosenbrock-Function">Rosenbrock Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="globalized_bfgs_method.html">Gradient method with Armijo Rule</a></li>
 </ul>
 
             
@@ -384,9 +397,8 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Algorithm">
 <h2>Algorithm<a class="headerlink" href="#Algorithm" title="Permalink to this headline">¶</a></h2>
 <div style="text-align:center"></div></div>
-</div>
 <div class="section" id="Step-Size:-Armijo-Rule">
-<h1>Step Size: Armijo Rule<a class="headerlink" href="#Step-Size:-Armijo-Rule" title="Permalink to this headline">¶</a></h1>
+<h2>Step Size: Armijo Rule<a class="headerlink" href="#Step-Size:-Armijo-Rule" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>We want to combine the search direction <span class="math notranslate nohighlight">\(d^k = - \nabla f(x^k)\)</span> with step-size <span class="math notranslate nohighlight">\(t_k\)</span></p></li>
 <li><p>The Armijo rule is supposed to ensure a sufficient decrease of the objective function</p></li>
@@ -415,7 +427,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="section" id="Rosenbrock-Function">
-<h1>Rosenbrock Function<a class="headerlink" href="#Rosenbrock-Function" title="Permalink to this headline">¶</a></h1>
+<h2>Rosenbrock Function<a class="headerlink" href="#Rosenbrock-Function" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Introduced by Howard H. Rosenbrock in 1960, used as a performance test problem for optimization problems.</p></li>
 <li><p>The Rosenbrock function <span class="math notranslate nohighlight">\(r: \mathbb{R}^2 \rightarrow \mathbb{R}\)</span> is given by:</p>
@@ -474,7 +486,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="section" id="Example">
-<h1>Example<a class="headerlink" href="#Example" title="Permalink to this headline">¶</a></h1>
+<h2>Example<a class="headerlink" href="#Example" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>The parameters will be the following:</p>
 <div class="math notranslate nohighlight">
@@ -518,7 +530,8 @@ Number of iterations: 8058
 </div>
 </div>
 <div class="section" id="References">
-<h1>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h1>
+<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
+</div>
 </div>
 
 
@@ -526,6 +539,15 @@ Number of iterations: 8058
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="globalized_bfgs_method.html" class="btn btn-neutral float-right" title="Gradient method with Armijo Rule" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="globalized_newton_method.html" class="btn btn-neutral float-left" title="Globalized Newton Method" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

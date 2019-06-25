@@ -12,6 +12,10 @@ Welcome to coptim's documentation!
 
    intro.rst
    gradient_method.ipynb
+   fast_gradient_method.ipynb
+   globalized_newton_method.ipynb
+   globalized_inexact_newton_method.ipynb
+   globalized_bfgs_method.ipynb
 
 
 Indices and tables

@@ -4,33 +4,14 @@ from src.optimizer import Optimizer
 
 
 class ProximalGradientMethod(Optimizer):
-    def __init__(self, design_matrix, response):
-        self.design_matrix = design_matrix
-        self.response = response
+    def __init__(self):
         self.iterations = 0
 
-    # def _backtracking_line_search(self, x, sfunc, beta, nsfunc, y, weights,  epsilon=2.0):
-    #     mse_val = sfunc.eval(x, beta, y)
-    #     mse_grad_val = sfunc.gradient(x, beta, y)
-    #     step = 1.0
-    #
-    #     for ls in range(20):
-    #         beta_prox = nsfunc.prox(beta - mse_grad_val / step, weights / step)
-    #         delta = (beta_prox - beta).flatten()
-    #
-    #
-    #         if orig_func <= quad_func:
-    #             break
-    #
-    #         step *= epsilon
-    #
-    #     return beta_prox
-
-    def optimize(self, x_0, func, nsfunc, epsilon, step_size):
+    def optimize(self, x_0, func, nsfunc, step_size):
         x = x_0
         for iterations in range(100):
 
-            x = nsfunc.prox(x - step_size * func.gradient(self.X, self.y, x))
+            x = nsfunc.prox(x - step_size * func.gradient(x))
 
         return x
 

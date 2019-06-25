@@ -6,27 +6,21 @@ from src.optimizer import Optimizer
 class ProximalGradientMethod(Optimizer):
     def __init__(self):
         self.iterations = 0
+        self.max_iters = 100
 
-    def optimize(self, x_0, func, nsfunc, step_size):
+    def optimize(self, x_0, func, nsfunc, step_size, epsilon):
         x = x_0
-        for iterations in range(100):
+        for iterations in range(self.max_iters):
 
-            x = nsfunc.prox(x - step_size * func.gradient(x))
+            next_x = nsfunc.prox(x - step_size * func.gradient(x))
+
+            if self.stopping_criteria(next_x, x, epsilon):
+                break
+
+            x = next_x
+            self.iterations += 1
 
         return x
 
-    def stopping_criteria(self, x_t, x, func, epsilon):
+    def stopping_criteria(self, x_t, x, epsilon):
         return np.linalg.norm(x_t - x) <= epsilon
-
-    # def step_size(self, x, func, beta, d, sigma):
-    #     i = 0
-    #     step = 1.0
-    #     inequality_satisfied = True
-    #     while orig_func <= quad_func:
-    #         orig_func = sfunc.eval(x, beta_prox, y)
-    #         quad_func = mse_val + delta @ mse_grad_val.flatten() + 0.5 * step * (delta @ delta)
-    #
-    #         step *= epsilon
-    #
-    #
-    #     return np.power(beta, i)

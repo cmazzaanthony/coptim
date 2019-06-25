@@ -22,12 +22,17 @@ class TestProximalGradientMethod(unittest.TestCase):
 
         optimizer = ProximalGradientMethod()
         sfunc = MSE(X, y)
-        nsfunc = L1()
+        nsfunc = L1(0.05)
 
         starting_point = np.zeros(n_features)
         step_size = 0.1
+        epsilon = 1e-2
 
         x = optimizer.optimize(starting_point,
                                sfunc,
                                nsfunc,
-                               step_size)
+                               step_size,
+                               epsilon)
+
+        self.assertEqual(np.count_nonzero(x), 9)
+        self.assertEqual(optimizer.iterations, 21)

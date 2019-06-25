@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Fast Gradient method with Armijo Rule &mdash; coptim 0.01 documentation</title>
+  <title>Globalized Newton Method &mdash; coptim 0.01 documentation</title>
   
 
   
@@ -129,13 +129,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Fast Gradient method with Armijo Rule</li>
+      <li>Globalized Newton Method</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/fast_gradient_method.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/globalized_newton_method.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -370,8 +370,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Fast-Gradient-method-with-Armijo-Rule">
-<h1>Fast Gradient method with Armijo Rule<a class="headerlink" href="#Fast-Gradient-method-with-Armijo-Rule" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Globalized-Newton-Method">
+<h1>Globalized Newton Method<a class="headerlink" href="#Globalized-Newton-Method" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -490,12 +490,25 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">gradient_method_rosenbrock</span><span class="p">(</span><span class="n">x_0</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                           <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                           <span class="n">sigma</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-                           <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-                           <span class="n">f</span><span class="o">=</span><span class="n">rosenbrock</span><span class="p">,</span>
-                           <span class="n">gradient</span><span class="o">=</span><span class="n">rosenbrock_gradient</span><span class="p">)</span>
+<span></span><span class="n">starting_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="mf">1e-8</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">2.1</span>
+<span class="n">k_max</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<span class="n">objective</span> <span class="o">=</span> <span class="n">Rosenbrock</span><span class="p">()</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">NewtonMethod</span><span class="p">()</span>
+
+<span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">x_0</span><span class="o">=</span><span class="n">starting_point</span><span class="p">,</span>
+                   <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span>
+                   <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+                   <span class="n">k_max</span><span class="o">=</span><span class="n">k_max</span><span class="p">,</span>
+                   <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span>
+                   <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+                   <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+                   <span class="n">func</span><span class="o">=</span><span class="n">objective</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

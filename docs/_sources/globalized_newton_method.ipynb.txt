@@ -4,7 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Fast Gradient method with Armijo Rule"
+    "# Globalized Newton Method"
    ]
   },
   {
@@ -27,7 +27,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "<div style=\"text-align:center\"><img src=\"fast_gradient_method.png\" width=\"700\" height=\"600\"></div>"
+    "<div style=\"text-align:center\"><img src=\"globalized_newton_method.png\" width=\"700\" height=\"600\"></div>"
    ]
   },
   {
@@ -150,12 +150,25 @@
     }
    ],
    "source": [
-    "gradient_method_rosenbrock(x_0=[-1.2, 1],\n",
-    "                           beta=0.5,\n",
-    "                           sigma=0.0001,\n",
-    "                           epsilon=0.0001,\n",
-    "                           f=rosenbrock,\n",
-    "                           gradient=rosenbrock_gradient)"
+    "starting_point = np.array([1.2, 1])\n",
+    "rho = 1e-8\n",
+    "p = 2.1\n",
+    "k_max = 200\n",
+    "beta = 0.5\n",
+    "sigma = 1e-4\n",
+    "epsilon = 1e-6\n",
+    "objective = Rosenbrock()\n",
+    "\n",
+    "optimizer = NewtonMethod()\n",
+    "\n",
+    "optimizer.optimize(x_0=starting_point,\n",
+    "                   rho=rho,\n",
+    "                   p=p,\n",
+    "                   k_max=k_max,\n",
+    "                   beta=beta,\n",
+    "                   sigma=sigma,\n",
+    "                   epsilon=epsilon,\n",
+    "                   func=objective)"
    ]
   },
   {

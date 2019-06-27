@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Gradient method with Armijo Rule &mdash; coptim 0.01 documentation</title>
+  <title>Globalized BFGS method &mdash; coptim 0.01 documentation</title>
   
 
   
@@ -88,12 +88,12 @@
 <li class="toctree-l1"><a class="reference internal" href="fast_gradient_method.html">Fast Gradient method with Armijo Rule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="globalized_newton_method.html">Globalized Newton Method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="globalized_inexact_newton_method.html">Globalized Inexact Newton Method</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Gradient method with Armijo Rule</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Globalized BFGS method</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Algorithm">Algorithm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Step-Size:-Armijo-Rule">Step Size: Armijo Rule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Step-Size:-Wolfe-Powell-Rule">Step Size: Wolfe-Powell Rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Rosenbrock-Function">Rosenbrock Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Bateman-Function">Bateman Function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Example">Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
 </ul>
 </li>
 </ul>
@@ -141,7 +141,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Gradient method with Armijo Rule</li>
+      <li>Globalized BFGS method</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -382,46 +382,81 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Gradient-method-with-Armijo-Rule">
-<h1>Gradient method with Armijo Rule<a class="headerlink" href="#Gradient-method-with-Armijo-Rule" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="section" id="Globalized-BFGS-method">
+<h1>Globalized BFGS method<a class="headerlink" href="#Globalized-BFGS-method" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">HTML</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;style&gt;</span>
+<span class="s2">.output {</span>
+<span class="s2">    display: flex;</span>
+<span class="s2">    align-items: center;</span>
+<span class="s2">    text-align: center;</span>
+<span class="s2">}</span>
+<span class="s2">&lt;/style&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<style>
+.output {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+</style></div>
 </div>
 <div class="section" id="Algorithm">
 <h2>Algorithm<a class="headerlink" href="#Algorithm" title="Permalink to this headline">¶</a></h2>
-<div style="text-align:center"></div></div>
-<div class="section" id="Step-Size:-Armijo-Rule">
-<h2>Step Size: Armijo Rule<a class="headerlink" href="#Step-Size:-Armijo-Rule" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>We want to combine the search direction <span class="math notranslate nohighlight">\(d^k = - \nabla f(x^k)\)</span> with step-size <span class="math notranslate nohighlight">\(t_k\)</span></p></li>
-<li><p>The Armijo rule is supposed to ensure a sufficient decrease of the objective function</p></li>
-</ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Armijo&#39;s Rule</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">inequality_satisfied</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">while</span> <span class="n">inequality_satisfied</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">func</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">func</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
-                <span class="n">d</span><span class="p">):</span>
-            <span class="k">break</span>
-
-        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+<span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;globalized_bfgs_method.png&#39;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/globalized_bfgs_method_3_0.png" src="_images/globalized_bfgs_method_3_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Step-Size:-Wolfe-Powell-Rule">
+<h2>Step Size: Wolfe-Powell Rule<a class="headerlink" href="#Step-Size:-Wolfe-Powell-Rule" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>For an unconstrained minimization problem, the Wolfe Powell rule are a set of inequalities that perform inexact line search.</p></li>
+<li><p>This allows for reduction the objective function sufficiently rather than exactly.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;wolfe_powell.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/globalized_bfgs_method_5_0.png" src="_images/globalized_bfgs_method_5_0.png" />
 </div>
 </div>
 </div>
@@ -434,13 +469,13 @@ div.rendered_html tbody tr:hover {
 \[r(x) = 100 (x_2 - x_1^2)^2+ (1 - x_1)^2\]</div>
 </li>
 </ul>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">src.functions</span> <span class="k">import</span> <span class="n">Function</span>
+<span class="kn">from</span> <span class="nn">src.function</span> <span class="k">import</span> <span class="n">Function</span>
 
 <span class="k">class</span> <span class="nc">Rosenbrock</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
 
@@ -466,22 +501,47 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-4-79a868fc8375&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-green-fg">import</span> numpy <span class="ansi-green-fg">as</span> np
-<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">from</span> src<span class="ansi-blue-fg">.</span>functions <span class="ansi-green-fg">import</span> Function
-<span class="ansi-green-intense-fg ansi-bold">      3</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-green-fg">class</span> Rosenbrock<span class="ansi-blue-fg">(</span>Function<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span>
+<div class="section" id="Bateman-Function">
+<h2>Bateman Function<a class="headerlink" href="#Bateman-Function" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">src.function</span> <span class="k">import</span> <span class="n">Function</span>
 
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named &#39;src.functions&#39;
-</pre></div></div>
+<span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">185</span><span class="p">,</span> <span class="mi">245</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span> <span class="mi">365</span><span class="p">])</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.038</span><span class="p">,</span> <span class="mf">0.085</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.103</span><span class="p">,</span> <span class="mf">0.093</span><span class="p">,</span> <span class="mf">0.095</span><span class="p">,</span> <span class="mf">0.088</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.073</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.038</span><span class="p">,</span> <span class="mf">0.028</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">])</span>
+
+
+<span class="k">class</span> <span class="nc">Bateman</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t_list</span><span class="o">=</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">y_x_t</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">t_list</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">t_list</span><span class="p">))</span>
+        <span class="n">f_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">y_x_t</span> <span class="o">-</span> <span class="n">Y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">f_raw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">gradient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">y_x_t</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span>
+
+        <span class="n">dx1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dx2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dx3</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">):</span>
+            <span class="n">dx1</span> <span class="o">=</span> <span class="n">dx1</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="o">-</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span> <span class="o">*</span> <span class="p">(</span><span class="n">y_x_t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">dx2</span> <span class="o">=</span> <span class="n">dx2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">*</span> <span class="p">(</span><span class="n">y_x_t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">dx3</span> <span class="o">=</span> <span class="n">dx3</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">*</span> <span class="p">(</span><span class="n">y_x_t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dx1</span><span class="p">,</span> <span class="n">dx2</span><span class="p">,</span> <span class="n">dx3</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">hessian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="Example">
@@ -501,35 +561,39 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">gradient_method_rosenbrock</span><span class="p">(</span><span class="n">x_0</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                           <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                           <span class="n">sigma</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-                           <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-                           <span class="n">f</span><span class="o">=</span><span class="n">rosenbrock</span><span class="p">,</span>
-                           <span class="n">gradient</span><span class="o">=</span><span class="n">rosenbrock_gradient</span><span class="p">)</span>
+<span></span><span class="kn">from</span> <span class="nn">src.optimizers.bfgs_method</span> <span class="k">import</span> <span class="n">BFGSMethod</span>
+
+<span class="n">objective</span> <span class="o">=</span> <span class="n">Rosenbrock</span><span class="p">()</span>
+<span class="n">starting_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">H_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">rho</span> <span class="o">=</span> <span class="mf">0.9</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-6</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">BFGSMethod</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">starting_point</span><span class="p">,</span>
+                       <span class="n">H_0</span><span class="p">,</span>
+                       <span class="n">rho</span><span class="p">,</span>
+                       <span class="n">sigma</span><span class="p">,</span>
+                       <span class="n">epsilon</span><span class="p">,</span>
+                       <span class="n">objective</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Optimal Point: </span><span class="si">{x}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Iterations: </span><span class="si">{optimizer.iterations}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Number of iterations: 8058
+Optimal Point: [1.         0.99999999]
+Iterations: 34
 </pre></div></div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>8058
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="References">
-<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

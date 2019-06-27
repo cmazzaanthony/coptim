@@ -88,15 +88,13 @@
 <li class="toctree-l1"><a class="reference internal" href="gradient_method.html">Gradient method with Armijo Rule</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Fast Gradient method with Armijo Rule</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Algorithm">Algorithm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Step-Size:-Armijo-Rule">Step Size: Armijo Rule</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Rosenbrock-Function">Rosenbrock Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Quadratic-Function">Quadratic Function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Example">Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="globalized_newton_method.html">Globalized Newton Method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="globalized_inexact_newton_method.html">Globalized Inexact Newton Method</a></li>
-<li class="toctree-l1"><a class="reference internal" href="globalized_bfgs_method.html">Gradient method with Armijo Rule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="globalized_bfgs_method.html">Globalized BFGS method</a></li>
 </ul>
 
             
@@ -385,104 +383,87 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Fast-Gradient-method-with-Armijo-Rule">
 <h1>Fast Gradient method with Armijo Rule<a class="headerlink" href="#Fast-Gradient-method-with-Armijo-Rule" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="Algorithm">
-<h2>Algorithm<a class="headerlink" href="#Algorithm" title="Permalink to this headline">¶</a></h2>
-<div style="text-align:center"></div></div>
-<div class="section" id="Step-Size:-Armijo-Rule">
-<h2>Step Size: Armijo Rule<a class="headerlink" href="#Step-Size:-Armijo-Rule" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>We want to combine the search direction <span class="math notranslate nohighlight">\(d^k = - \nabla f(x^k)\)</span> with step-size <span class="math notranslate nohighlight">\(t_k\)</span></p></li>
-<li><p>The Armijo rule is supposed to ensure a sufficient decrease of the objective function</p></li>
-</ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Armijo&#39;s Rule</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">inequality_satisfied</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">while</span> <span class="n">inequality_satisfied</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">func</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">func</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
-                <span class="n">d</span><span class="p">):</span>
-            <span class="k">break</span>
-
-        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Rosenbrock-Function">
-<h2>Rosenbrock Function<a class="headerlink" href="#Rosenbrock-Function" title="Permalink to this headline">¶</a></h2>
-<ul>
-<li><p>Introduced by Howard H. Rosenbrock in 1960, used as a performance test problem for optimization problems.</p></li>
-<li><p>The Rosenbrock function <span class="math notranslate nohighlight">\(r: \mathbb{R}^2 \rightarrow \mathbb{R}\)</span> is given by:</p>
-<div class="math notranslate nohighlight">
-\[r(x) = 100 (x_2 - x_1^2)^2+ (1 - x_1)^2\]</div>
-</li>
-</ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">src.functions</span> <span class="k">import</span> <span class="n">Function</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">HTML</span>
 
-<span class="k">class</span> <span class="nc">Rosenbrock</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;2 dimensional input only.&#39;</span>
-        <span class="k">return</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-
-    <span class="k">def</span> <span class="nf">gradient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;2 dimensional input only.&#39;</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-            <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">200</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">200</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-            <span class="mi">200</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">hessian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;2 dimensional input only.&#39;</span>
-        <span class="n">df_dx1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">400</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1200</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span>
-        <span class="n">df_dx1dx2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">400</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">df_dx2dx1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">400</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">df_dx2</span> <span class="o">=</span> <span class="mi">200</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">df_dx1</span><span class="p">,</span> <span class="n">df_dx1dx2</span><span class="p">],</span> <span class="p">[</span><span class="n">df_dx2dx1</span><span class="p">,</span> <span class="n">df_dx2</span><span class="p">]])</span>
+<span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;style&gt;</span>
+<span class="s2">.output {</span>
+<span class="s2">    display: flex;</span>
+<span class="s2">    align-items: center;</span>
+<span class="s2">    text-align: center;</span>
+<span class="s2">}</span>
+<span class="s2">&lt;/style&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
+<div class="output_area rendered_html docutils container">
+<style>
+.output {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+</style></div>
+</div>
+<div class="section" id="Algorithm">
+<h2>Algorithm<a class="headerlink" href="#Algorithm" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;fast_gradient_method.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
 <div class="output_area docutils container">
-<div class="highlight"><pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-4-79a868fc8375&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-green-fg">import</span> numpy <span class="ansi-green-fg">as</span> np
-<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">from</span> src<span class="ansi-blue-fg">.</span>functions <span class="ansi-green-fg">import</span> Function
-<span class="ansi-green-intense-fg ansi-bold">      3</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-green-fg">class</span> Rosenbrock<span class="ansi-blue-fg">(</span>Function<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span>
+<img alt="_images/fast_gradient_method_3_0.png" src="_images/fast_gradient_method_3_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Quadratic-Function">
+<h2>Quadratic Function<a class="headerlink" href="#Quadratic-Function" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>This function is a polynomial of degree 2.</p></li>
+<li><p>The Quadratic function <span class="math notranslate nohighlight">\(r: \mathbb{R}^n \rightarrow \mathbb{R}\)</span> is given by:</p>
+<div class="math notranslate nohighlight">
+\[f(x) = \frac{1}{2} x^T Q x + b^T x + c\]</div>
+</li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">src.function</span> <span class="k">import</span> <span class="n">Function</span>
 
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named &#39;src.functions&#39;
-</pre></div></div>
+
+<span class="k">class</span> <span class="nc">Quadratic</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span> <span class="o">+</span> <span class="n">gamma</span>
+
+    <span class="k">def</span> <span class="nf">gradient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Q</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+
+    <span class="k">def</span> <span class="nf">hessian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="Example">
@@ -490,47 +471,51 @@ div.rendered_html tbody tr:hover {
 <ul>
 <li><p>The parameters will be the following:</p>
 <div class="math notranslate nohighlight">
-\[\beta := 0.5, \sigma := 10^{-4}, \varepsilon := 10^{-4}\]</div>
+\[\varepsilon := 10^{-5}, \delta = 0.01\]</div>
 </li>
 <li><p>Start point will be the following:</p>
 <div class="math notranslate nohighlight">
-\[x^0 := (-1.2, 1)\]</div>
+\[x^0 := (1, 2, 3, 4)\]</div>
+</li>
+<li><p>The Q matrix will be the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix}1 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; \delta \end{bmatrix}\end{split}\]</div>
 </li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">gradient_method_rosenbrock</span><span class="p">(</span><span class="n">x_0</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                           <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                           <span class="n">sigma</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-                           <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-                           <span class="n">f</span><span class="o">=</span><span class="n">rosenbrock</span><span class="p">,</span>
-                           <span class="n">gradient</span><span class="o">=</span><span class="n">rosenbrock_gradient</span><span class="p">)</span>
+<span></span><span class="kn">from</span> <span class="nn">src.optimizers.fast_gradient_method</span> <span class="k">import</span> <span class="n">FastGradientMethod</span>
+
+<span class="n">objective</span> <span class="o">=</span> <span class="n">Quadratic</span><span class="p">()</span>
+<span class="n">starting_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.00001</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">FastGradientMethod</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">starting_point</span><span class="p">,</span>
+                       <span class="n">objective</span><span class="p">,</span>
+                       <span class="n">epsilon</span><span class="p">,</span>
+                       <span class="n">delta</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Optimal Point: </span><span class="si">{x}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Iterations: </span><span class="si">{optimizer.iterations}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Number of iterations: 8058
+Optimal Point: [  -1.           -1.           -1.         -100.00082264]
+Iterations: 711
 </pre></div></div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
-<span></span>8058
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="References">
-<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

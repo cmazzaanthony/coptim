@@ -38,6 +38,8 @@ class NewtonMethod(Optimizer):
 
             self.iterations += 1
 
+        return x
+
     def stopping_criteria(self, x, func, epsilon, k_max):
         return np.linalg.norm(func.gradient(x)) >= epsilon or self.iterations > k_max
 

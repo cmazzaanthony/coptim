@@ -1,10 +1,49 @@
-coptim: A Convex Optimization Package
-==============================
+# coptim: A Convex Optimization Package
 
-* [Documentation](https://cmazzaanthony.github.io/coptim/)
+coptim is a Python library for solving convex smooth/non-smooth objective functions.
 
-Project Organization
-------------
+## Documentation
+
+Sphinx Documentation is available [here](https://cmazzaanthony.github.io/coptim/).
+
+## Installation
+
+```bash
+git clone git@github.com:cmazzaanthony/coptim.git
+cd coptim
+pip install -e .
+```
+
+## Usage
+
+```python
+from src.optimizers.gradient_method import GradientMethod
+from src.functions.rosenbrock import Rosenbrock
+
+objective = Rosenbrock()
+starting_point = np.array([-1.2, 1])
+beta = 0.5
+sigma = 0.0001
+epsilon = 0.0001
+
+optimizer = GradientMethod()
+
+x = optimizer.optimize(starting_point,
+                       objective,
+                       beta,
+                       sigma,
+                       epsilon)
+
+print(f'Optimal Point: {x}')
+print(f'Iterations: {optimizer.iterations}')
+```
+
+```
+Optimal Point: [0.99992058 0.9998407 ]
+Iterations: 8058
+```
+
+## Project Organization
 
     ├── LICENSE
     ├── README.md          <- The top-level README.
@@ -34,3 +73,11 @@ Project Organization
         ├── optimizer.py   <- Abstract class for optimizer
 
 --------
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)

@@ -1,4 +1,4 @@
-from src.function import Function
+from coptim.function import Function
 
 
 class MSE(Function):

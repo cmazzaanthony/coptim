@@ -2,9 +2,9 @@ import unittest
 
 import numpy as np
 
-from src.functions.mse import MSE
-from src.functions.l1 import L1
-from src.optimizers.proximal_gradient_method import ProximalGradientMethod
+from coptim.functions.mse import MSE
+from coptim.functions.l1 import L1
+from coptim.optimizers.proximal_gradient_method import ProximalGradientMethod
 
 
 class TestProximalGradientMethod(unittest.TestCase):

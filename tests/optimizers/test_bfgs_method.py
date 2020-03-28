@@ -2,9 +2,9 @@ import unittest
 
 import numpy as np
 
-from src.functions.bateman import Bateman
-from src.functions.rosenbrock import Rosenbrock
-from src.optimizers.bfgs_method import BFGSMethod
+from coptim.functions.bateman import Bateman
+from coptim.functions.rosenbrock import Rosenbrock
+from coptim.optimizers.bfgs_method import BFGSMethod
 
 
 class TestBFGSMethod(unittest.TestCase):

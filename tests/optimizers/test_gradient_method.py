@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 
-from src.functions.rosenbrock import Rosenbrock
-from src.optimizers.gradient_method import GradientMethod
+from coptim.functions.rosenbrock import Rosenbrock
+from coptim.optimizers.gradient_method import GradientMethod
 
 
 class TestGradientMethod(unittest.TestCase):

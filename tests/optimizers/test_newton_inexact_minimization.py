@@ -2,9 +2,9 @@ import unittest
 
 import numpy as np
 
-from src.functions.func1 import Func1
-from src.functions.rosenbrock import Rosenbrock
-from src.optimizers.newton_method_inexact_minimization import InexactNewtonMethod
+from coptim.functions.func1 import Func1
+from coptim.functions.rosenbrock import Rosenbrock
+from coptim.optimizers.newton_method_inexact_minimization import InexactNewtonMethod
 
 
 class TestNewtonInexactMethod(unittest.TestCase):

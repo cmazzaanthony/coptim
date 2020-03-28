@@ -17,8 +17,8 @@ pip install -e .
 ## Usage
 
 ```python
-from src.optimizers.gradient_method import GradientMethod
-from src.functions.rosenbrock import Rosenbrock
+from coptim.optimizers.gradient_method import GradientMethod
+from coptim.functions.rosenbrock import Rosenbrock
 
 objective = Rosenbrock()
 starting_point = np.array([-1.2, 1])

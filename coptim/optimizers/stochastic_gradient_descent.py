@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.optimizer import Optimizer
+from coptim.optimizer import Optimizer
 
 
 def make_iterator(self, X, y, batch_size):

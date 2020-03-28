@@ -1,5 +1,5 @@
 import numpy as np
-from src.function import Function
+from coptim.function import Function
 
 T = np.array([15, 25, 35, 45, 55, 65, 75, 85, 105, 185, 245, 305, 365])
 Y = np.array([0.038, 0.085, 0.1, 0.103, 0.093, 0.095, 0.088, 0.08, 0.073, 0.05, 0.038, 0.028, 0.02])

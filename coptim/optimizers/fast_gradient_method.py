@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.optimizer import Optimizer
+from coptim.optimizer import Optimizer
 
 
 class FastGradientMethod(Optimizer):

@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 
-from src.functions.quadratic import Quadratic
-from src.optimizers.fast_gradient_method import FastGradientMethod
+from coptim.functions.quadratic import Quadratic
+from coptim.optimizers.fast_gradient_method import FastGradientMethod
 
 
 class TestFastGradientMethod(unittest.TestCase):
